@@ -1,0 +1,29 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.Title</title>
+
+    @*<script src="~/Content/PGIS/jquery/jquery.js"></script>*@
+    <script src="~/Content/PGIS/pgis/js/EzMapAPI.js" charset="GB2312"></script>
+    <script src="~/Content/PGIS/pgis/js/EzServerClient.js" charset="GB2312"></script>
+    <script src="~/Content/PGIS/pgis/js/EzServerClient.Extend.js"></script>
+    @*<script src="~/Content/PGIS/pgis/js/Map.js"></script>*@
+    <script src="~/Content/PGIS/pgis/js/GIS.js"></script>
+
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+    @RenderSection("LinkScripts", false)
+</head>
+<body>
+    @RenderBody()
+</body>
+</html>

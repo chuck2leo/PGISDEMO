@@ -1,0 +1,369 @@
+﻿
+@{
+    ViewBag.Title = "PGIS-DemoPage";
+    Layout = "~/Views/Shared/_MapPageLayout.cshtml";
+}
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: '微软雅黑';
+    }
+
+    /*#leftContent {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 300px;
+        height: 80%;
+        background-color: #fff;
+        opacity: .96;
+        z-index: 10;
+        box-shadow: 1px 1px 15px #888;
+    }*/
+
+    #rightContent {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 400px;
+        height: 700px;
+        z-index: 10;
+        box-shadow: 1px 1px 15px #888;
+    }
+
+    #gatewayView, #pathwayView {
+        background-color: #fff;
+        opacity: 0.95;
+    }
+
+    .Wdate {
+        width: 130px;
+    }
+
+    #switchBar {
+        height: 45px;
+    }
+
+    .switch-btn {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 45px;
+        padding: 0;
+        outline: none;
+        cursor: pointer;
+        border: none;
+        background-color: #f3f5f6;
+    }
+
+    #gatewayList {
+        border: 1px solid #ececec;
+        height: 630px;
+    }
+
+    #pathwayList {
+        border: 1px solid #ececec;
+        height: 582px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .white-black {
+        background-color: #fff;
+    }
+</style>
+
+@section LinkScripts{
+    <script src="~/Content/Plugins/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/common.js"></script>
+}
+
+@*<div id="leftContent">
+    </div>*@
+
+<div id="map">
+</div>
+
+<div id="rightContent">
+
+    <div id="switchBar">
+        <button class="switch-btn white-black">网关视图</button>
+        <button class="switch-btn">轨迹视图</button>
+    </div>
+
+    <!--网关视图-->
+    <div id="gatewayView">
+        <label for="deviceId">设备编号</label>
+        <input id="deviceId" value="001" placeholder="超过一个时用,分隔" />
+        <button id="btnSearchGateway">查询</button>
+        <button id="btnClearMap" onclick="clearMap();">清空</button>
+        <button id="btnSearchAllGateway">显示所有</button>
+        <div id="gatewayList">
+
+        </div>
+    </div>
+
+    <!--轨迹视图-->
+    <div id="pathwayView" class="hidden">
+        <div>
+            <label for="numbers">标签号</label>
+            <input id="numbers" type="text" value="66666" placeholder="超过一个时用,分隔" />
+        </div>
+        <div>
+            <label for="timeIntervals">查询区间</label>
+            <input id="timeIntervalsBegin" class="Wdate" type="text" value="2018-01-01 00:00:00" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+            -
+            <input id="timeIntervalsEnd" class="Wdate" type="text" value="2018-01-02 00:00:00" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+        </div>
+        <div>
+            <button id="btnSearchPathway">查询</button>
+            <button id="btnClearMap" onclick="clearMap();">清空</button>
+        </div>
+        <div id="pathwayList">
+            <span>标签轨迹</span>
+            <button>轨迹回放</button>
+            <button>全部回放</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+    var myMap;
+
+    $(function () {
+
+        $("#map").width($(document).innerWidth());
+        $("#map").height($(document).innerHeight());
+
+        //实例化一个EzMap，容器为$('#map')[0]
+        myMap = new EzMap(document.getElementById('map'));
+
+        //地图区域屏蔽浏览器默认右键菜单
+        $('#map')[0].oncontextmenu = function (e) {
+            e.preventDefault();
+        }
+
+        //地图区域屏蔽浏览器默认滚动行为
+        $('#map')[0].onmousewheel = function (e) {
+            e.preventDefault();
+        };
+
+        //地图区域自适应伸缩
+        $(window).on('resize', function () {
+            $("#map").width($(window).innerWidth());
+            $("#map").height($(window).innerHeight());
+            myMap.resizeMapView();
+        });
+
+        //地图区域双击放大
+        myMap.addMapEventListener(EzEvent.MAP_DBLCLICK, function (evt) {
+            myMap.zoomAtPoint(evt.mapPoint, myMap.getZoomLevel() + 1);
+        });
+
+        //添加鹰眼（鹰眼在非天地图时存在异常bug，暂未解决）
+        //var ov = new OverView();//构造鹰眼对象
+        //ov.width = 250;//设置鹰眼的宽度，单位为像素px
+        //ov.height = 200;//设置鹰眼的高度
+        //myMap.addOverView(ov);//添加鹰眼对象到地图对象中
+        //myMap.showOverView();//展开鹰眼
+
+        //显示简化地图控件
+        //待重写，使其支持距左侧距离可控。
+        myMap.showSmallMapControl();
+
+        //隐藏右上角地图服务按钮
+        myMap.hideMapServer();
+
+        //切换地图服务（按EzMapAPI.js配置的索引顺序）
+        //myMap.switchMapServer(0);
+
+        $('#btnSearchGateway').on('click', function () {
+            var ids = $('#deviceId').val();
+            if (ids == '') {
+                alert('请输入设备编号');
+            }
+            $.ajax({
+                url: '/Gateway/GetGateway',
+                data: {
+                    ids: ids
+                },
+                type: 'get',
+                success: function (data) {
+                    console.log(data);
+                    clearMap();
+                    data.forEach(function (item, index, arr) {
+                        if (item != null) {
+                            if (index == 0) {
+                                myMap.recenterOrPanToLatLng(new Point(bd09ToWGS84(item.LON + ',' + item.LAT)));
+                            }
+                            drawGateway(item.DeviceId, item.Address, item.LAT, item.LON);
+                        }
+                    });
+                },
+                failure: function () {
+                }
+            });
+        });
+
+        $('#btnSearchAllGateway').on('click', function () {
+            $.ajax({
+                url: '/Gateway/GetAllGateway',
+                data: {
+                },
+                type: 'get',
+                success: function (data) {
+                    console.log(data);
+                    clearMap();
+                    data.forEach(function (item, index, arr) {
+                        if (item != null) {
+                            drawGateway(item.DeviceId, item.Address, item.LAT, item.LON);
+                        }
+                    });
+                },
+                failure: function (data) {
+                }
+            });
+        });
+
+        $('#btnSearchPathway').on('click', function () {
+            var numbers = $('#numbers').val();
+            var timeIntervalsBegin = $('#timeIntervalsBegin').val();
+            var timeIntervalsEnd = $('#timeIntervalsEnd').val();
+
+            if (numbers == '') {
+                alert('请输入标签号！');
+                $('#numbers').focus();
+                return false;
+            } else if (timeIntervalsBegin == '') {
+                alert('请选择开始时间！');
+                $('#timeIntervalsBegin').focus();
+                return false;
+            } else if (timeIntervalsEnd == '') {
+                alert('请选择结束时间！');
+                $('#timeIntervalsEnd').focus();
+                return false;
+            }
+
+            $.ajax({
+                url: '/PathData/GetPathway',
+                data: {
+                    numbers: numbers,
+                    timeIntervalsBegin: timeIntervalsBegin,
+                    timeIntervalsEnd: timeIntervalsEnd
+                },
+                type: 'get',
+                success: function (data) {
+                    console.log(data);
+                    clearMap();
+                    for (var i = 0; i < data.length; i++) {
+                        var item = data[i].Gateways;
+                        for (var j = 0; j < item.length; j++) {
+                            (function (k) {
+                                drawGateway(item[k].DeviceId, item[k].Address, item[k].LAT, item[k].LON, item[k].PassTime);
+                                if (k < item.length - 1) {
+                                    $.ajax({
+                                        url: '/Navigation/GetBMapRideRoute',
+                                        data: {
+                                            from: item[k].LAT + ',' + item[k].LON,
+                                            to: item[k + 1].LAT + ',' + item[k + 1].LON
+                                        },
+                                        async: false,
+                                        success: function (data) {
+                                            var data = JSON.parse(data);
+                                            var routes = data.result.routes;
+                                            if (routes != undefined && routes.length > 0) {
+                                                var thePoints = '';
+                                                for (var i = 0; i < routes[0].steps.length; i++) {
+                                                    thePoints += routes[0].steps[i].path + ";";
+                                                }
+                                                var thePointsArr = thePoints.split(';');
+                                                thePointsArr.pop();
+                                                var pgisPointsStr = '';
+                                                thePointsArr.forEach(function (val, index, arr) {
+                                                    if (val != '') {
+                                                        pgisPointsStr += bd09ToWGS84(val) + ',';
+                                                    }
+                                                });
+                                                var thePath = new Polyline(pgisPointsStr.substr(0, pgisPointsStr.length - 1), '#1888d6', '8', 1, 0, null, new Date().getTime().valueOf());
+                                                myMap.addOverlay(thePath);
+                                                //var mbr = thePath.getMBR();
+                                                //myMap.centerAtMBR(mbr);对中到包络框
+                                            } else {
+                                                alert("获取不到可用的路线规划！");
+                                                return false;
+                                            }
+                                        },
+                                        failure: function () { }
+                                    });
+                                }
+                            })(j);
+                        }
+                    }
+
+
+                },
+                failure: function (data) {
+                }
+            });
+        });
+
+        $('#switchBar button').on('click', function () {
+            var that = this;
+            var others = $('#switchBar button').not(that);
+            $(that).addClass('white-black');
+            $(others).removeClass('white-black');
+            var click = $(that).text();
+            switch (click) {
+                case '网关视图':
+                    $('#gatewayView').removeClass('hidden');
+                    $('#pathwayView').addClass('hidden');
+                    break;
+                case '轨迹视图':
+                    $('#pathwayView').removeClass('hidden').addClass('white-black');
+                    $('#gatewayView').addClass('hidden').removeClass('white-black');
+                    break;
+                default:
+                    break;
+            }
+        });
+
+    });
+
+    //清空地图
+    function clearMap() {
+        myMap.clear();
+    }
+
+    //绘制网关
+    function drawGateway(deviceId, address, lat, lon, passTime) {
+        var pPoint = new Point(bd09ToWGS84(lon + ',' + lat));
+        var pIcon = new Icon();
+        pIcon.height = 27;
+        pIcon.width = 30;
+        pIcon.topOffset = -13;
+        pIcon.leftOffset = 0;
+        pIcon.image = "../../Content/Images/gis-icon/baseStation.png";
+        if (passTime === undefined) {
+            var pTitle = new Title("设备编号：" + deviceId + "</br>网关点位：" + address + "</br>纬度：" + lat + "</br>经度：" + lon, 12, 1, "微软雅黑", "black", "white", "#0db1f5", 2, false, 280, 100, 'beautyTitle');
+        } else {
+            var pTitle = new Title("设备编号：" + deviceId + "</br>网关点位：" + address + "<br/>通过时间：" + formatDateTime(passTime) + "</br>纬度：" + lat + "</br>经度：" + lon, 12, 1, "微软雅黑", "black", "white", "#0db1f5", 2, false, 280, 100, 'beautyTitle');
+        }
+        var marker = new Marker(pPoint, pIcon, pTitle);
+        marker.hideTitle();
+        marker.addListener('mouseover', function (e) {
+            marker.showTitle();
+        });
+        marker.addListener('mouseout', function (e) {
+            marker.hideTitle();
+        });
+        myMap.addOverlay(marker);
+    }
+
+</script>

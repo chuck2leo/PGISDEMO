@@ -1,0 +1,392 @@
+
+BODY {
+	MARGIN: 0px 0px 0px 0px;
+	COLOR: black; 
+	FONT-FAMILY: Arial; 
+	/*BACKGROUND-COLOR: #5295CA*/
+}
+
+
+TD.leftBorder{
+ border-right:2px solid #e2efff; border-bottom:2px solid #e2efff; border-left-width:1px; border-top-width:1px; text-align:center;color:blue}
+
+TD.rightBorder{
+  border-bottom:2px solid #e2efff;  border-top-width:1px;text-align:left}
+
+TD.bottomBorder{
+ border-bottom:2px solid #e2efff;  border-top-width:1px;text-align:left}
+
+
+TD.bottomBorder_textCenter{
+ border-bottom:2px solid #e2efff;  border-top-width:1px;text-align:center}
+
+
+CAPTION {
+font-size: 18pt; color:#008066;font-family: ºÚÌå; font-weight: bold;height:48
+}
+
+IMG {
+	BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+A {
+	COLOR: #0000cc
+}
+td,p,li,input,select,textarea,a{font-size:12px;}
+
+A.selected {
+	FONT-WEIGHT: bold; COLOR: black; TEXT-DECORATION: none
+}
+
+#page {
+	WIDTH: 100%; POSITION: relative; HEIGHT: 100%
+}
+#map {
+	BORDER-RIGHT: #979797 0px solid; BORDER-TOP: #979797 0px solid; BORDER-LEFT: #979797 0px solid; MARGIN-RIGHT: 0px; BORDER-BOTTOM: #979797 0px solid; POSITION: absolute; HEIGHT: 100%;WIDTH: 100%
+}
+#master {
+	BORDER-RIGHT: #979797 0px solid; BORDER-TOP: #979797 0px solid; BORDER-LEFT: #979797 0px solid; MARGIN-RIGHT: 0px; BORDER-BOTTOM: #979797 0px solid; BORDER-TOP: #979797 0px solid;POSITION: absolute;
+}
+
+.map {
+	BORDER-RIGHT: #979797 0px solid; BORDER-TOP: #979797 0px solid; BORDER-LEFT: #979797 0px solid; MARGIN-RIGHT: 0px; BORDER-BOTTOM: #979797 0px solid; POSITION: absolute; HEIGHT: 100%;WIDTH: 100%
+}
+
+
+.title{ 
+	text-align: right;
+	color:red;
+	}
+.fieldstyle        { border:2px solid black; PADDING-RIGHT: 4px; PADDING-LEFT: 4px; PADDING-BOTTOM: 1px; MARGIN-LEFT: 8px; COLOR: red; PADDING-TOP: 1px; forecolor: blue }
+
+#links IMG {
+	VERTICAL-ALIGN: bottom; WIDTH: 0px; HEIGHT: 0px
+}
+.noselect {
+	moz-user-select: none
+}
+v\:* {
+	BEHAVIOR: url(#default#VML)
+}
+.mobileList {
+	width: 150px;
+}
+.MobileInfoDisp { font-size: 10pt; text-align: left; color: #008000; text-decoration: blink;
+               font-weight: bold; margin-left: 20; margin-right: 10;
+               padding-left: 4; padding-right: 4; padding-top: 3;
+               padding-bottom: 3 }
+.TimePanel { font-size: 10pt; text-align: left; color: #008000; text-decoration: blink;
+               font-weight: bold; margin-left: 15; margin-right: 10;
+               padding-left: 4; padding-right: 4; padding-top: 3;
+               padding-bottom: 3 }
+.videoInfo { font-size: 10pt; text-align: left; color: #000066; text-decoration: blink;
+               margin-left: 10; margin-right: 10;
+               padding-left: 4; padding-right: 4; padding-top: 3;
+               padding-bottom: 3;
+               line-height: 150% }               
+
+.InfoClass { 
+	font-size: 8pt; 
+	text-align: left; 
+	color: #000066; 
+	text-decoration: none;
+    margin-left: 5; 
+    margin-right: 5;
+    padding-left: 4;
+    padding-right: 4;
+    padding-top: 3;
+    padding-bottom: 3;
+    line-height: 130%;
+    /*width:200px!important;*/
+    word-wrap:break-word;
+}               
+
+
+#InfoTable{
+
+	font-size: 10pt;
+	border-top:1px solid #e2efff; 
+	padding-left: 4px; 
+	padding-right: 4px; 
+  padding-top: 1px; 
+  padding-bottom: 1px; 
+  border-left-width:1px; 
+  border-right-width:1px; 
+  border-bottom-width:1px;
+  width:250px
+}
+#InfoTable_2{
+	width:250px;
+	border-style: solid;
+	border-width: 1px;
+	border-color:#8f8f8e;
+	padding-left: 1px;
+	padding-right: 1px;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+#InfoDIV{
+	BACKGROUND-IMAGE: url('bgLine.gif');
+}
+.InfoTitle{
+	BACKGROUND-POSITION:   center;
+	BACKGROUND-IMAGE: url('bgLine.gif');
+	BACKGROUND-REPEAT: repeat-x;
+	HEIGHT: 25px
+}
+.InfoWord{
+	FONT-WEIGHT: bold; FONT-SIZE: 12px; COLOR: #525251;
+}
+.InfoClose{
+	COLOR: #525251; TEXT-DECORATION: none
+}
+.mapServerControl{
+	BORDER-RIGHT: #015190 1px solid;
+	BORDER-TOP: #015190 1px solid;
+	BORDER-LEFT: #015190 1px solid;
+	BORDER-BOTTOM: #015190 1px solid;
+	RIGHT: 12em;
+	WIDTH: 65px;
+	HEIGHT: 12px;
+	CURSOR: pointer;
+	POSITION: absolute;
+	BACKGROUND-COLOR: #F4C767;
+
+}
+.mapServerControlShadow{
+	/*BORDER-RIGHT:#015190 1px solid;
+	BORDER-TOP: #015190 1px solid;
+	BORDER-LEFT: #015190 1px solid;
+	BORDER-BOTTOM: #015190 1px solid;
+	FONT-WEIGHT: bold;
+	FONT-SIZE: 12px;
+	color:#015190;
+	TEXT-VALIGN:middle;*/
+	TEXT-ALIGN: center;
+	VERTICAL-ALIGN:middle;
+	BORDER-RIGHT: #015190 0px solid;
+	BORDER-TOP: #F4C767 2px solid;
+	FONT-WEIGHT: bold;
+	FONT-SIZE: 12px;
+	FONT-FAMILY:ËÎÌå;
+	BORDER-LEFT: #b0b0b0 1px solid;
+	BORDER-BOTTOM:#015190 0px solid;
+	color:#015190
+}
+.contextmenu {
+	BORDER-RIGHT: #676767 1px solid; BORDER-TOP: #cccccc 1px solid; Z-INDEX: 1000; BORDER-LEFT: #cccccc 1px solid; CURSOR: pointer; BORDER-BOTTOM: #676767 1px solid; POSITION: absolute; BACKGROUND-COLOR: white
+}
+.contextmenu .divider {
+	BORDER-TOP: #cccccc 1px solid
+}
+.menuitem {
+	PADDING-LEFT: 8px; PADDING-RIGHT: 8px;PADDING-BOTTOM: 2px; COLOR: #0000cc; PADDING-TOP: 2px; BACKGROUND-COLOR: white
+}
+.selectedmenuitem {
+	BACKGROUND-COLOR: #d3e3fe
+}
+
+.tblPalette{cursor:pointer;background:#FFFFFF;width:100%;height:100%;line-height:1px;font-size:1px;} 
+.tblPalette td{border:1px #666666 solid;}
+
+.mapCtrl{
+	position:absolute;
+}
+.panNormal{
+	left:0px;
+	top:0px;
+	width:47px;
+	height:47px;
+	background-image:url("../images/mapControl/panNormal.png");
+}
+.panDirect{
+	cursor:pointer;
+	width:15px;
+	height:15px;
+}
+.panN{
+	left:16px;
+	top:0px;
+}
+.panW{
+	left:0px;
+	top:16px;
+}
+.panS{
+	left:16px;
+	bottom:0px;
+}.panE{
+	right:0px;
+	top:16px;
+}
+.panCtrlN{
+	left:0px;
+	top:0px;
+	width:47px;
+	height:47px;
+	background-image:url("../images/mapControl/pan_N.png");
+}
+.panCtrlW{
+	left:0px;
+	top:0px;
+	width:47px;
+	height:47px;
+	background-image:url("../images/mapControl/pan_W.png");
+}
+.panCtrlS{
+	left:0px;
+	top:0px;
+	width:47px;
+	height:47px;
+	background-image:url("../images/mapControl/pan_S.png");
+}
+.panCtrlE{
+	left:0px;
+	top:0px;
+	width:47px;
+	height:47px;
+	background-image:url("../images/mapControl/pan_E.png");
+}
+.slider{
+	left:0px;
+	top:50px;
+	width:60px;
+	overflow:hidden;
+}
+.zoomIn{
+	cursor:pointer;
+	left:14px;
+	top:1px;
+	width:20px;
+	height:18px;
+	background-image:url("../images/mapControl/zoomIn.png");
+}
+.zoomOut{
+	cursor:pointer;
+	left:14px;
+	bottom:1px;
+	width:20px;
+	height:18px;
+	z-index:2;
+	background-image:url("../images/mapControl/zoomOut.png");
+}
+.zoomSliderBoun{
+	cursor:pointer;
+	left:14px;
+	top:19px;
+	width:18px;
+	overflow:hidden;
+	z-index:1;
+}
+.zooSliderClick{
+	cursor:pointer;
+	left:0px;
+	top:0px;
+	width:18px;
+	z-index:1;
+	
+}
+.zoomSliderBgTop{
+	left:6px;
+	top:0px;
+	width:9px;
+	height:232px;
+	overflow:hidden;
+	z-index:-1;
+	background-image:url("../images/mapControl/bg_top.png");
+}
+.zoomSliderBgBto{
+	left:0px;
+	bottom:0px;
+	width:9px;
+	height:232px;
+	overflow:hidden;
+	z-index:-1;
+	background-image:url("../images/mapControl/bg_bto.png");
+}
+.zoomSliderBtoBoun{
+	left:6px;
+	bottom:0px;
+	width:9px;
+	height:232px;
+	overflow:hidden;
+}
+.zoomSliderBar{
+	cursor:pointer;
+	left:0px;
+	width:18px;
+	height:7px;
+	overflow:hidden;
+	z-index:2;
+	background-image:url("../images/mapControl/sliderBar7.png");
+	background-position-x:0px;
+	background-position-y:0px;
+	background-repeat:no-repeat;
+}
+.levelNumBoun{
+	left:0px;
+	top:19px;
+	width:16px;
+	overflow:hidden;
+}
+.levelNumZ{
+	left:0px;
+	bottom:0px;
+	width:16px;
+	height:232px;
+	overflow:hidden;
+	background-image:url("../images/mapControl/num_z.png");
+}
+.levelNumD{
+	left:0px;
+	top:0px;
+	width:16px;
+	height:232px;
+	overflow:hidden;
+	background-image:url("../images/mapControl/num_d.png");
+}
+.mapCtrltagBoun{
+	right:0px;
+	top:0px;
+	width:26px;
+	height:232px;
+	overflow:hidden;
+}
+.maptag_country{
+	cursor:pointer;
+	left:0px;
+	width:26px;
+	height:21px;
+	background-image:url("../images/mapControl/country.png");
+}
+.maptag_province{
+	cursor:pointer;
+	left:0px;
+	width:26px;
+	height:21px;
+	background-image:url("../images/mapControl/province.png");
+}.maptag_city{
+	cursor:pointer;
+	left:0px;
+	width:26px;
+	height:21px;
+	background-image:url("../images/mapControl/city.png");
+}.maptag_street{
+	cursor:pointer;
+	left:0px;
+	width:26px;
+	height:21px;
+	background-image:url("../images/mapControl/street.png");
+}
+.mapNum_div{
+	font-size: 12px;	
+	margin-top:0; margin-bottom:0; margin-left:5; margin-right:5;	
+	border-width:0;	
+	padding: 0px;
+	font-weight:bolder;
+	color:#FF0000;
+	
+}
+.mapBackGroundImg{
+	background-image:url("../images/onetwo.png");
+	background-repeat: repeat
+}
