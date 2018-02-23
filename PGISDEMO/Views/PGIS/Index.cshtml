@@ -1,0 +1,674 @@
+﻿
+@{
+    ViewBag.Title = "PGIS-DemoPage";
+    Layout = "~/Views/Shared/_MapPageLayout.cshtml";
+}
+
+<link href="~/Content/Materialize/css/materialize.min.css" rel="stylesheet" />
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        font-family: '微软雅黑';
+    }
+
+    a {
+        cursor: pointer;
+    }
+
+    #map a:hover {
+        text-decoration: underline;
+    }
+
+    #rightContent {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 400px;
+        z-index: 10;
+        box-shadow: 1px 1px 25px #888;
+    }
+
+    #gatewayView, #pathwayView {
+        background-color: #fff;
+        opacity: 0.95;
+    }
+
+    .beautyTitle {
+        padding: 10px 12px !important;
+    }
+
+    .tab {
+        width: 50%;
+    }
+
+    .tabs .indicator {
+        height: 4px;
+    }
+</style>
+
+@section LinkScripts{
+
+    <script src="~/Content/Materialize/js/materialize.min.js"></script>
+
+    <script src="~/Content/PGIS/pgis/js/EzMapAPI.js" charset="GB2312"></script>
+    <script src="~/Content/PGIS/pgis/js/EzServerClient.js" charset="GB2312"></script>
+    <script src="~/Content/PGIS/pgis/js/EzServerClient.Extend.js"></script>
+    <script src="~/Content/PGIS/pgis/js/GIS.js"></script>
+
+    <script src="~/Content/Plugins/My97DatePicker/WdatePicker.js"></script>
+    <script src="~/Scripts/common.js"></script>
+}
+
+<div id="map">
+</div>
+
+<div id="rightContent">
+    <nav class="nav-extended">
+        <div class="nav-content">
+            <ul class="tabs tabs-transparent">
+                <li class="tab"><a class="active" href="#gatewayView">网关视图</a></li>
+                <li class="tab"><a href="#pathwayView">轨迹视图</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div id="gatewayView" class="col s12">
+        <div class="row" style="padding-top:10px;margin-bottom:0;">
+            <div class="input-field col s5">
+                <input placeholder="超过一个时用,分隔" id="deviceId" type="text" class="validate" autocomplete="off" value="001">
+                <label for="deviceId">设备编号</label>
+            </div>
+            <div class="input-field col s7">
+                <button class="btn waves-effect waves-light" id="btnSearchGateway">查询</button>
+                <button class="btn waves-effect waves-light blue-grey lighten-2" id="btnClearMap" onclick="clearMap();">清空</button>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:0;padding-bottom:20px;">
+            <div class="input-field col s12">
+                <button class="waves-effect waves-light btn" id="btnSearchAllGateway">显示所有</button>
+                <button class="waves-effect waves-light btn" id="btnSearchDrawGateway">拉框查找</button>
+                <button class="waves-effect waves-light btn blue-grey lighten-2" id="btnMeasureLength">测距</button>
+            </div>
+        </div>
+
+        <div id="gatewayList" class="row" style="margin-bottom:0;" hidden="hidden">
+            <div class="row" style="margin-bottom:5px;">
+                <div class="col s2">
+                    <label>跟随</label>
+                </div>
+                <div class="col s10">
+                    <input class="with-gap" name="recenter" type="radio" id="autoyes" checked="checked" />
+                    <label for="autoyes">是</label>&nbsp;&nbsp;
+                    <input class="with-gap" name="recenter" type="radio" id="autono" />
+                    <label for="autono">否</label>
+                </div>
+            </div>
+            <div class="row" style="margin-left:0.75rem;margin-right:0.75rem;max-height:400px;overflow-y:scroll;">
+                <table class="striped highlight">
+                    <thead>
+                        <tr>
+                            <th align="left" width="45px">编号</th>
+                            <th align="left">网关点位</th>
+                            <th align="left" width="150px">经纬度</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="pathwayView" class="col s12">
+        <div class="row" style="padding-top:10px;margin-bottom:0;">
+            <div class="input-field col s12">
+                <input placeholder="超过一个时用,分隔" id="numbers" type="text" class="validate" autocomplete="off" value="66666,77777">
+                <label for="numbers">标签号</label>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:0;">
+            <div class="input-field col s12" style="padding:0 0;">
+                <div class="col s6">
+                    <input id="timeIntervalsBegin" type="text" value="2018-01-01 00:00:00" onfocus="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                    <label for="timeIntervalsBegin">查询区间</label>
+                </div>
+                <div class="col s6">
+                    <input id="timeIntervalsEnd" type="text" value="2018-01-02 00:00:00" onfocus="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})" onClick="WdatePicker({el:this,dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom:0;padding-bottom:20px;">
+            <div class="input-field col s12">
+                <button class="waves-effect waves-light btn" id="btnSearchPathway">查询</button>
+                <button class="waves-effect waves-light btn blue-grey lighten-2" id="btnClearMap" onclick="clearMap();">清空</button>
+            </div>
+        </div>
+        <div id="pathwayList" hidden="hidden">
+            <div class="row">
+                <div class="input-field col s12">
+                    <button class="waves-effect waves-light btn" id="btnPlayback">轨迹回放</button>
+                    <button class="waves-effect waves-light btn blue-grey lighten-2" id="btnClearPlay">清除回放</button>
+                </div>
+            </div>
+            <div class="row" style="margin-left:0.75rem;margin-right:0.75rem;margin-bottom:0;padding-bottom:20px;max-height:400px;overflow-y:scroll;">
+                <table class="striped highlight">
+                    <thead>
+                        <tr>
+                            <th align="left" width="60px">标签号</th>
+                            <th align="left">网关点位</th>
+                            <th align="left" width="145px">通过时间</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var myMap;
+    var colors = ['#1888d6', '#009c5e', '#e43440', '#1db7c4', '#7c309b'];  //轨迹颜色
+    var baseImg = '../../Content/Images/gis-icon/baseStation.png';  //网关图标
+    var hoverImg = '../../Content/Images/gis-icon/baseStation-green.png';  //网关在鼠标滑过时的图标
+    var nearbyImg = '../../Content/Images/gis-icon/baseStation-gray.png';  //附近网关图标
+    var startImg = '../../Content/Images/gis-icon/start.png';  //起点图标
+    var endImg = '../../Content/Images/gis-icon/end.png';  //终点图标
+    var tagImg = '../../Content/Images/gis-icon/vehicle.png';  //标签图标
+    var config = {
+        autoRecenter: $('#gatewayList input#autoyes').attr('checked') === 'checked' ? true : false  //控制鼠标滑过列表项时，相应地图元素是否自动对中
+    };
+    var pathwayData = [];  //轨迹数据集
+
+    $(function () {
+
+        $("#map").width($(document).innerWidth());
+        $("#map").height($(document).innerHeight());
+
+        //实例化一个EzMap，容器为$('#map')[0]
+        myMap = new EzMap(document.getElementById('map'));
+
+        //地图区域屏蔽浏览器默认右键菜单
+        $('#map')[0].oncontextmenu = function (e) {
+            e.preventDefault();
+        }
+
+        //地图区域屏蔽浏览器默认滚动行为
+        $('#map')[0].onmousewheel = function (e) {
+            e.preventDefault();
+        };
+
+        //地图区域自适应伸缩
+        $(window).on('resize', function () {
+            $("#map").width($(window).innerWidth());
+            $("#map").height($(window).innerHeight());
+            myMap.resizeMapView();
+        });
+
+        //地图区域双击放大
+        myMap.addMapEventListener(EzEvent.MAP_DBLCLICK, function (evt) {
+            myMap.zoomAtPoint(evt.mapPoint, myMap.getZoomLevel() + 1);
+        });
+
+        //添加鹰眼（鹰眼在非天地图时存在异常bug，暂未解决）
+        //var ov = new OverView();//构造鹰眼对象
+        //ov.width = 250;//设置鹰眼的宽度，单位为像素px
+        //ov.height = 200;//设置鹰眼的高度
+        //myMap.addOverView(ov);//添加鹰眼对象到地图对象中
+        //myMap.showOverView();//展开鹰眼
+
+        //显示简化地图控件
+        //待重写，使其支持距左侧距离可控。
+        myMap.showSmallMapControl();
+
+        //隐藏右上角地图服务按钮
+        myMap.hideMapServer();
+
+        //切换地图服务（按EzMapAPI.js配置的索引顺序）
+        //myMap.switchMapServer(0);
+
+        $('#btnSearchGateway').on('click', function () {
+            var ids = $('#deviceId').val();
+            if (ids == '') {
+                Materialize.toast('请输入设备编号!', 3000);
+                $('#deviceId').focus();
+                return false;
+            }
+            $.ajax({
+                url: '/Gateway/GetGateway',
+                data: {
+                    ids: ids
+                },
+                type: 'get',
+                success: function (data) {
+                    clearMap();
+                    $('#gatewayList tbody').html('');
+                    $('#gatewayList').show();
+                    data.forEach(function (item, index, arr) {
+                        if (item != null) {
+                            if (index == 0) {
+                                myMap.recenterOrPanToLatLng(new Point(bd09ToWGS84(item.LON + ',' + item.LAT)));
+                            }
+                            drawGateway(item.DeviceId, item.Address, item.LAT, item.LON);
+                            drawGatewayList(item);
+                        }
+                    });
+                },
+                failure: function () {
+                }
+            });
+        });
+
+        $('#btnSearchAllGateway').on('click', function () {
+            $.ajax({
+                url: '/Gateway/GetAllGateway',
+                data: {
+                },
+                type: 'get',
+                success: function (data) {
+                    console.log(data);
+                    clearMap();
+                    $('#gatewayList tbody').html('');
+                    $('#gatewayList').show();
+                    data.forEach(function (item, index, arr) {
+                        if (item != null) {
+                            drawGateway(item.DeviceId, item.Address, item.LAT, item.LON);
+                            drawGatewayList(item);
+                        }
+                    });
+                },
+                failure: function (data) {
+                }
+            });
+        });
+
+        $('#btnSearchDrawGateway').on('click', function () {
+            myMap.changeDragMode('drawRect', null, null, function (points) {
+                points = wgs84ToBd09(points);  //转换为百度坐标
+                var pointsArry = points.split(',');
+                $.ajax({
+                    url: '/Gateway/GetDrawGateway',
+                    data: {
+                        x1: pointsArry[0],  //西
+                        y1: pointsArry[1],  //南
+                        x2: pointsArry[2],  //东
+                        y2: pointsArry[3]   //北
+                    },
+                    type: 'get',
+                    async: true,
+                    success: function (data) {
+                        clearMap();
+                        $('#gatewayList').show();
+                        data.forEach(function (item, index, arr) {
+                            drawGateway(item.DeviceId, item.Address, item.LAT, item.LON);
+                            drawGatewayList(item);
+                        });
+                    },
+                    failure: function (data) {
+                    }
+                });
+                myMap.removeDrawGeometry();
+            });
+        });
+
+        $("#btnMeasureLength").click(function () {
+            switch ($(this).text().trim()) {
+                case '测距':
+                    //myMap.changeDragMode('measure');
+                    myMap.measureLength(function (length) {
+                        ;
+                    });
+                    $(this).text('清除测距');
+                    break;
+                case '清除测距':
+                    myMap.measureLength(function (length) {
+                        ;
+                    });
+                    myMap.changeDragMode('pan');
+                    $(this).text('测距');
+                    break;
+                default:
+                    break;
+            }
+        });
+
+        $('#btnSearchPathway').on('click', function () {
+            var numbers = $('#numbers').val();
+            var timeIntervalsBegin = $('#timeIntervalsBegin').val();
+            var timeIntervalsEnd = $('#timeIntervalsEnd').val();
+
+            if (numbers == '') {
+                Materialize.toast('请输入标签号!', 3000);
+                $('#numbers').focus();
+                return false;
+            } else if (timeIntervalsBegin == '') {
+                Materialize.toast('请选择开始时间!', 3000);
+                $('#timeIntervalsBegin').focus();
+                return false;
+            } else if (timeIntervalsEnd == '') {
+                Materialize.toast('请选择结束时间!', 3000);
+                $('#timeIntervalsEnd').focus();
+                return false;
+            }
+
+            $.ajax({
+                url: '/PathData/GetPathway',
+                data: {
+                    numbers: numbers,
+                    timeIntervalsBegin: timeIntervalsBegin,
+                    timeIntervalsEnd: timeIntervalsEnd
+                },
+                type: 'get',
+                success: function (data) {
+                    console.log(data);
+                    clearMap();
+                    $('#pathwayList').show();
+                    pathwayData = data;
+                    for (var i = 0; i < data.length; i++) {
+                        drawPathwayList(data[i]);
+                        var item = data[i].Gateways;
+                        for (var j = 0; j < item.length; j++) {
+                            (function (k) {
+                                if (k === 0) {
+                                    drawGateway(item[k].DeviceId, item[k].Address, item[k].LAT, item[k].LON, item[k].PassTime, 'start');
+                                } else if (k === item.length - 1) {
+                                    drawGateway(item[k].DeviceId, item[k].Address, item[k].LAT, item[k].LON, item[k].PassTime, 'end');
+                                } else {
+                                    drawGateway(item[k].DeviceId, item[k].Address, item[k].LAT, item[k].LON, item[k].PassTime);
+                                }
+                                if (k < item.length - 1) {
+                                    $.ajax({
+                                        url: '/Navigation/GetBMapRideRoute',
+                                        data: {
+                                            from: item[k].LAT + ',' + item[k].LON,
+                                            to: item[k + 1].LAT + ',' + item[k + 1].LON
+                                        },
+                                        async: false,
+                                        success: function (data) {
+                                            var data = JSON.parse(data);
+                                            var routes = data.result.routes;
+                                            if (routes != undefined && routes.length > 0) {
+                                                var thePoints = '';
+                                                for (var l = 0; l < routes[0].steps.length; l++) {
+                                                    thePoints += routes[0].steps[l].path + ";";
+                                                }
+                                                var thePointsArr = thePoints.split(';');
+                                                thePointsArr.pop();
+                                                var pgisPointsStr = '';
+                                                thePointsArr.forEach(function (val, index, arr) {
+                                                    if (val != '') {
+                                                        pgisPointsStr += bd09ToWGS84(val) + ',';
+                                                    }
+                                                });
+                                                if (pathwayData[i].Path === undefined) {
+                                                    pathwayData[i].Path = '';
+                                                }
+                                                pathwayData[i].Path += pgisPointsStr;
+                                                var thePath = new Polyline(pgisPointsStr.substr(0, pgisPointsStr.length - 1), colors[i], '8', 1, 0, null, new Date().getTime().valueOf());
+                                                myMap.addOverlay(thePath);
+                                                //var mbr = thePath.getMBR();
+                                                //myMap.centerAtMBR(mbr);对中到包络框
+                                                drawArrow(thePointsArr, 'baidu', 5, 200);
+                                            } else {
+                                                Materialize.toast('获取不到可用的路线规划!', 3000);
+                                                return false;
+                                            }
+                                        },
+                                        failure: function () { }
+                                    });
+                                }
+                            })(j);
+                        }
+                    }
+                },
+                failure: function (data) {
+                }
+            });
+        });
+
+        $('#btnPlayback').on('click', function () {
+            clearPlay();
+            pathwayData.forEach(function (item, index, arr) {
+                pgisPlay(item.Path.substr(0, item.Path.length - 1), item.Number, index);
+            });
+        });
+
+        $('#btnClearPlay').on('click', function () {
+            clearPlay();
+        });
+
+        $(document).on('mouseenter mouseleave', '#gatewayList tbody tr', function (e) {
+            var deviceId = $(this).find('td').first().html();
+            var marker = getMarker(deviceId);
+            if (e.type === 'mouseenter') {
+                if (config.autoRecenter === true) {
+                    myMap.recenterOrPanToLatLng(marker.point);
+                }
+                highlightMarker(marker);
+            } else if (e.type === 'mouseleave') {
+                restoreMarker(marker);
+            }
+        });
+
+        $('#gatewayList input[name=recenter]').on('click', function () {
+            if (this.id === 'autoyes') {
+                config.autoRecenter = true;
+            } else if (this.id === 'autono') {
+                config.autoRecenter = false;
+            }
+        });
+
+    });
+
+    //清空地图
+    function clearMap() {
+        myMap.clear();
+        $('#gatewayList tbody').html('');
+        $('#pathwayList tbody').html('');
+        $('#gatewayList').hide();
+        $('#pathwayList').hide();
+        $('#btnMeasureLength').text('测距');
+        pathwayData = [];
+    }
+
+    //绘制网关
+    function drawGateway(deviceId, address, lat, lon, passTime, iconType) {
+        var pPoint = new Point(bd09ToWGS84(lon + ',' + lat));
+        var pIcon = new Icon();
+        pIcon.height = 27;
+        pIcon.width = 30;
+        pIcon.topOffset = -13;
+        pIcon.leftOffset = 0;
+        var iconImg = baseImg;
+        switch (iconType) {
+            case 'start':
+                iconImg = startImg;
+                pIcon.height = 32;
+                pIcon.width = 24;
+                pIcon.topOffset = -12;
+                pIcon.leftOffset = 0;
+                break;
+            case 'end':
+                iconImg = endImg;
+                pIcon.height = 32;
+                pIcon.width = 24;
+                pIcon.topOffset = -12;
+                pIcon.leftOffset = 0;
+                break;
+            case 'nearby':
+                iconImg = nearbyImg;
+                pIcon.height = 27;
+                pIcon.width = 30;
+                pIcon.topOffset = -13;
+                pIcon.leftOffset = 0;
+                break;
+            default:
+                break;
+        }
+        pIcon.image = iconImg;
+        if (passTime === undefined || passTime === null || passTime === '') {
+            var pTitle = new Title("设备编号：<a onclick='Materialize.toast(\"" + deviceId + "\"" + ',' + 3000 + ");'>" + deviceId + "</a><a style='display:inline-block;float:right;font-size:10px;' onclick='showNearbyGateway(\"" + deviceId + '\",' + 800 + ")'>查看附近(800米)网关</a></br>网关点位：" + address + "</br>纬度：" + lat + "</br>经度：" + lon, 12, 1, "微软雅黑", "black", "white", "#0db1f5", 2, false, 280, 100, 'beautyTitle');
+        } else {
+            var pTitle = new Title("设备编号：<a onclick='Materialize.toast(\"" + deviceId + "\"" + ',' + 3000 + ");'>" + deviceId + "</a><a style='display:inline-block;float:right;font-size:10px;' onclick='showNearbyGateway(\"" + deviceId + '\",' + 800 + ")'>查看附近(800米)网关</a></br>网关点位：" + address + "<br/>通过时间：" + formatDateTime(passTime) + "</br>纬度：" + lat + "</br>经度：" + lon, 12, 1, "微软雅黑", "black", "white", "#0db1f5", 2, false, 280, 100, 'beautyTitle');
+        }
+        var marker = new Marker(pPoint, pIcon, pTitle);
+        marker.deviceId = deviceId;  //数据标识
+        marker.overlayType = iconType;  //图形标识
+        marker.hideTitle();
+        marker.addListener('mouseenter', function (e) {
+            highlightMarker(marker);
+        });
+        marker.addListener('mouseleave', function (e) {
+            restoreMarker(marker);
+        });
+
+        myMap.addOverlay(marker);
+    }
+
+    //追加数据到网关列表
+    function drawGatewayList(gateway) {
+        var tr = '<tr><td align="center">' + gateway.DeviceId + '</td><td>' + gateway.Address + '</td><td>' + gateway.LON + '<br/>' + gateway.LAT + '</td></tr>';
+        $('#gatewayList tbody').append(tr);
+    }
+
+    //追加数据到轨迹列表
+    function drawPathwayList(pathway) {
+        pathway.Gateways.forEach(function (item, index, arr) {
+            var tr = '<tr><td align="center">' + pathway.Number + '</td><td>' + item.Address + '</td><td>' + formatDateTime(item.PassTime) + '</td></tr>';
+            $('#pathwayList tbody').append(tr);
+        });
+    }
+
+    //突出显示网关Marker
+    function highlightMarker(marker) {
+        marker.scale(1.1);
+        marker.setZIndex(parseFloat(marker.getZIndex()) + 100);
+        marker.showTitle();
+        if (marker.overlayType === undefined) {
+            marker.div.src = hoverImg;
+        }
+    }
+
+    //还原显示网关Marker
+    function restoreMarker(marker) {
+        marker.scale(1);
+        marker.setZIndex(parseFloat(marker.getZIndex()) - 100);
+        marker.hideTitle();
+        if (marker.overlayType === undefined) {
+            marker.div.src = marker.icon.image;
+        }
+    }
+
+    //获取地图覆盖物
+    function getAllOverlays(type) {
+        var ols = myMap.getOverlays();
+        var res = [];
+        switch (type) {
+            case 'Marker':
+                for (var i = 0; i < ols.length; i++) {
+                    if (ols[i] instanceof Marker) {
+                        res.push(ols[i]);
+                    }
+                }
+                break;
+            default:
+                res = ols;
+                break;
+        }
+        return res;
+    }
+
+    //获取网关Marker
+    function getMarker(deviceId) {
+        var marker = new Marker(new Point(), new Icon());
+        var markers = getAllOverlays('Marker');
+        for (var i = 0; i < markers.length; i++) {
+            if (markers[i].deviceId !== undefined && markers[i].deviceId === deviceId) {
+                marker = markers[i];
+                break;
+            }
+        }
+        return marker;
+    }
+
+    //删除网关Marker
+    function removeMarker(deviceId) {
+        var markers = getAllOverlays('Marker');
+        markers.forEach(function (item, index, arr) {
+            if (item.deviceId !== undefined && item.deviceId === deviceId) {
+                myMap.removeOverlay(item);
+            }
+        });
+    }
+
+    //删除附近网关(图标及遮罩)
+    function removeNeary() {
+        var overlays = getAllOverlays();
+        overlays.forEach(function (item, index, arr) {
+            if (item.overlayType === 'nearby') {
+                myMap.removeOverlay(item);
+            }
+        });
+    }
+
+    //查看附近网关
+    function showNearbyGateway(deviceId, radius) {
+        removeNeary();
+        $.ajax({
+            url: '/Gateway/GetNearbyGateways',
+            data: {
+                deviceId: deviceId,
+                radius: radius
+            },
+            type: 'get',
+            success: function (data) {
+                console.log(data);
+                //绘制遮罩
+                var pointRadiusStr = bd09ToWGS84(data.Center.LON + ',' + data.Center.LAT);
+                pointRadiusStr += ',' + myMap.getDegree(new Point(pointRadiusStr), radius);  //根据设定的半径(米)计算半径跨度
+                var circle = new Circle(pointRadiusStr, 'green', 2, 0.2, '#0000ff');
+                circle.overlayType = 'nearby';
+                myMap.addOverlay(circle);
+                //绘制网关
+                data.Nearby.forEach(function (item, index, arr) {
+                    drawGateway(item.DeviceId, item.Address, item.LAT, item.LON, undefined, 'nearby');
+                });
+            },
+            failure: function () {
+            }
+        });
+    }
+
+    //PGIS轨迹推演
+    function pgisPlay(points, vehiclePlateNum, index) {
+        var speedNo = points.split(',').length / 2 * 3;  //速度系数根据轨迹点数目计算而来
+        var pPoint = new Point();
+        var pIcon = new Icon();
+        pIcon.height = 32;
+        pIcon.width = 24;
+        pIcon.topOffset = -12;
+        pIcon.leftOffset = 0;
+        pIcon.image = tagImg;
+        var pTitle = new Title(vehiclePlateNum.toString(), 12, 1, '微软雅黑', "white", colors[index], colors[index], 2, false, 80, 0);
+        var marker = new Marker(pPoint, pIcon, pTitle);
+        marker.isTag = true;
+        myMap.addOverlay(marker);  //myMap为一个EzMap地图对象，marker为一个Marker对象
+        marker.setInterval(20);  //设置推演的时间间隔为20毫秒,即按路线推演时时间间隔为20毫秒
+        marker.setRepeat(false);  //设置推演为不重复推演状态
+        marker.setPath(10, speedNo, points);  //此函数的意思为：整个路线被设定为speedNo*20毫秒，推演的起始时间点为10毫秒
+        marker.play();  //开始推演
+    }
+
+    //清除回放
+    function clearPlay() {
+        var markers = getAllOverlays('Marker');
+        markers.forEach(function (item, index, arr) {
+            if (item.isTag) {
+                myMap.removeOverlay(item);
+            }
+        });
+    }
+
+</script>
