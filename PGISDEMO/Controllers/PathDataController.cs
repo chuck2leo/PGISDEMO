@@ -7,6 +7,9 @@ using System.Web.Mvc;
 
 namespace PGISDEMO.Controllers
 {
+    /// <summary>
+    /// 轨迹数据相关
+    /// </summary>
     public class PathDataController : Controller
     {
         /// <summary>

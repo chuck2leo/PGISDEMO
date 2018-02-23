@@ -48,9 +48,9 @@ namespace PGISDEMO.Models
             list.Add(new PathDataModel("1", "001", "66666", DateTime.Parse("2018/1/1 10:00:00")));  //66666于001网关处接收到信号
             list.Add(new PathDataModel("2", "002", "66666", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(1)));  //66666于002网关处接收到信号
             list.Add(new PathDataModel("3", "003", "66666", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(2)));  //66666于003网关处接收到信号
-            list.Add(new PathDataModel("4", "002", "66666", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(3)));  //66666于002网关处接收到信号
+            //list.Add(new PathDataModel("4", "002", "66666", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(3)));  //66666于002网关处接收到信号
 
-            list.Add(new PathDataModel("5", "001", "77777", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(1)));  //77777于001网关处接收到信号
+            //list.Add(new PathDataModel("5", "001", "77777", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(1)));  //77777于001网关处接收到信号
             list.Add(new PathDataModel("6", "004", "77777", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(2)));  //77777于004网关处接收到信号
             list.Add(new PathDataModel("7", "005", "77777", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(3)));  //77777于005网关处接收到信号
             list.Add(new PathDataModel("8", "006", "77777", DateTime.Parse("2018/1/1 10:00:00").AddMinutes(4)));  //77777于006网关处接收到信号

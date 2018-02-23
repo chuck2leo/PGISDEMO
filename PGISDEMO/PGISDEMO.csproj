@@ -118,6 +118,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Images\gis-icon\arrow\0.png" />
+    <Content Include="Content\Images\gis-icon\arrow\112.png" />
+    <Content Include="Content\Images\gis-icon\arrow\135.png" />
+    <Content Include="Content\Images\gis-icon\arrow\157.png" />
+    <Content Include="Content\Images\gis-icon\arrow\180.png" />
+    <Content Include="Content\Images\gis-icon\arrow\202.png" />
+    <Content Include="Content\Images\gis-icon\arrow\22.png" />
+    <Content Include="Content\Images\gis-icon\arrow\225.png" />
+    <Content Include="Content\Images\gis-icon\arrow\247.png" />
+    <Content Include="Content\Images\gis-icon\arrow\270.png" />
+    <Content Include="Content\Images\gis-icon\arrow\292.png" />
+    <Content Include="Content\Images\gis-icon\arrow\315.png" />
+    <Content Include="Content\Images\gis-icon\arrow\337.png" />
+    <Content Include="Content\Images\gis-icon\arrow\45.png" />
+    <Content Include="Content\Images\gis-icon\arrow\67.png" />
+    <Content Include="Content\Images\gis-icon\arrow\90.png" />
     <Content Include="Content\Images\gis-icon\baseStation-gray.png" />
     <Content Include="Content\Images\gis-icon\baseStation-green.png" />
     <Content Include="Content\Images\gis-icon\baseStation-red.png" />
@@ -125,6 +141,10 @@
     <Content Include="Content\Images\gis-icon\end.png" />
     <Content Include="Content\Images\gis-icon\start.png" />
     <Content Include="Content\Images\gis-icon\vehicle.png" />
+    <Content Include="Content\Materialize\css\materialize.css" />
+    <Content Include="Content\Materialize\css\materialize.min.css" />
+    <Content Include="Content\Materialize\js\materialize.js" />
+    <Content Include="Content\Materialize\js\materialize.min.js" />
     <Content Include="Content\PGIS\EzMap源码分析\EzMapAPI.js" />
     <Content Include="Content\PGIS\EzMap源码分析\EzServerClient.gz.js" />
     <Content Include="Content\PGIS\EzMap源码分析\EzServerClient.Layer.ArcGISTileLayer.js" />
@@ -257,9 +277,21 @@
     </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\_MapPageLayout.cshtml" />
-    <Content Include="Views\PGIS\Index.cshtml" />
     <Content Include="Content\PGIS\jquery\jquery.min.map" />
     <Content Include="Content\PGIS\pgis\js\EzServerClient.gz.js.bak" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Bold.woff" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Bold.woff2" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Light.woff" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Light.woff2" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Medium.woff" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Medium.woff2" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Regular.woff" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Regular.woff2" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Thin.woff" />
+    <Content Include="Content\Materialize\fonts\roboto\Roboto-Thin.woff2" />
+    <Content Include="Content\Materialize\LICENSE" />
+    <Content Include="Content\Materialize\README.md" />
+    <Content Include="Views\PGIS\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -269,9 +301,16 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Views\Connect\" />
     <Folder Include="Views\Gateway\" />
     <Folder Include="Views\Navigation\" />
     <Folder Include="Views\PathData\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonService\CommonService.csproj">
+      <Project>{04791cf8-2542-4e0a-9718-0f7eb7c6b3df}</Project>
+      <Name>CommonService</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -3,6 +3,24 @@
 //引入：liuchao
 //=======================
 
+//功能：绘制轨迹箭头
+//参数：轨迹点集,地图类型,均匀度阈值(米),间隔度
+function drawArrow(arr, map, distance, space, belongTo) {
+    for (var i = 0, j = 0; i < arr.length - 1; i = j) {
+        if (checkDistance(arr[i], arr[i + 1], map, distance)) {
+            var center = getCenterPoint(arr[i], arr[i + 1]);
+            arr.splice(i + 1, 0, center);
+            j = i > 0 ? i : i + 1;
+        } else {
+            j++;
+        }
+    }
+    for (var i = 0; i < arr.length - 1; i += space) {
+        var angle = getAngle(arr[i], arr[i + 1]);
+        drawMarker(arr[i + 1], angle, belongTo);
+    }
+}
+
 //功能：获取中间点坐标
 //参数：pt1:"x(经度),y(纬度)"
 //返回：中间点
@@ -134,7 +152,7 @@ function createIcon(angle) {
     icon.height = 18; icon.width = 18;
     icon.topOffset = 0;
     icon.leftOffset = 0;
-    icon.image = "../../Content/images/gis-icon/arrow/" + adjAngles[adjIndex] + ".png";
+    icon.image = "../../Content/Images/gis-icon/arrow/" + adjAngles[adjIndex] + ".png";
     return icon;
 }
 
